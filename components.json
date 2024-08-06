@@ -12,6 +12,9 @@
   "framework": "nuxt",
   "aliases": {
     "components": "@/components",
-    "utils": "@/lib/utils"
+    "utils": "@/lib/utils",
+    "models": "@/models",
+    "types": "@/types",
+    "server": "@/server"
   }
 }

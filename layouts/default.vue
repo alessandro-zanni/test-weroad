@@ -8,7 +8,7 @@ import UserNav from './components/UserNav.vue';
 <template>
   <div class="flex flex-col">
     <div class="border-b">
-      <div class="flex h-16 items-center px-8">
+      <div class="container mx-auto flex h-16 items-center px-8">
         <Logo />
         <MainNav class="mx-6" />
         <div class="ml-auto flex items-center space-x-4">
@@ -18,7 +18,7 @@ import UserNav from './components/UserNav.vue';
       </div>
     </div>
 
-    <div class="flex-1 space-y-4 p-8 pt-6">
+    <div class="container mx-auto flex-1 space-y-4 p-8 pt-6">
       <slot />
     </div>
   </div>

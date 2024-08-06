@@ -1,4 +1,4 @@
-import { travelsData } from '~/server/travelsData';
+import { travelsData } from '@/server/travelsData';
 
 export default defineEventHandler((event) => {
   // return a travel by id

@@ -1,124 +1,4 @@
-<!-- <script setup lang="tsx">
-  import { createColumnHelper, type CellContext } from '@tanstack/vue-table';
-  import type { Travel } from '~/models';
-  import DataTableActions from '~/components/DataTableActions.vue';
-
-  const stars = Array.from({ length: 5 }, (_, i) => i + 1);
-
-  const { data, status } = await useFetch<{ data: Travel[] }>('api/travels', {
-    lazy: true,
-    server: false,
-  });
-  const travels = computed({
-    get: () => data.value?.data ?? [],
-    set: (value) => {
-      data.value = { ...data.value, data: value };
-    },
-  });
-  const loading = computed(() => status.value === 'pending');
-
-  const handleTravelDelete = (id: number) => {
-    const index = travels.value.findIndex((travel) => travel.id === id);
-    travels.value.splice(index, 1);
-  };
-
-  const columnHelper = createColumnHelper<Travel>();
-  const columns = [
-    columnHelper.accessor('name', {
-      header: () => 'Name',
-      cell: (props) => {
-        return (
-          <div class="flex items-center whitespace-nowrap">
-            <img
-              src={props.row.original.picture}
-              alt={props.row.original.name}
-              class="w-auto h-8 mr-3"
-            />
-            {props.row.original.name}
-          </div>
-        );
-      },
-    }),
-    columnHelper.accessor('departure', {
-      header: () => 'Departure',
-      cell: (props) => {
-        return new Date(props.row.original.departure).toLocaleDateString();
-      },
-    }),
-    columnHelper.accessor('return', {
-      header: () => 'Return',
-      cell: (props) => {
-        return new Date(props.row.original.return).toLocaleDateString();
-      },
-    }),
-    columnHelper.accessor('description', {
-      header: () => 'Description',
-    }),
-    columnHelper.accessor('price', {
-      header: () => 'Price',
-      cell: (props) => {
-        return formatPrice(props.row.original.price);
-      },
-    }),
-    columnHelper.accessor('rating', {
-      header: () => 'Rating',
-      cell: (props) => {
-        const rating = props.row.original.rating;
-        return (
-          <div class="flex items-center">
-            {stars.map((star) => (
-              <svg
-                aria-hidden="true"
-                class={[
-                  star <= rating
-                    ? 'text-yellow-400'
-                    : 'text-gray-300 dark:text-gray-500',
-                  'w-5 h-5',
-                ]}
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            ))}
-            <span class="ml-1 text-gray-500 dark:text-gray-400">{rating}</span>
-          </div>
-        );
-      },
-    }),
-    {
-      id: 'actions',
-      header: () => 'Actions',
-      cell: (props: CellContext<any, unknown>) => {
-        const editLink = `/travels/${props.row.original.id}`;
-        return (
-          <DataTableActions
-            id={props.row.original.id}
-            editLink={editLink}
-            onDelete:travel={handleTravelDelete}
-          />
-        );
-      },
-    },
-  ];
-</script>
-
-<template>
-  <PageHeading title="Travels" />
-  <div v-if="loading" class="flex justify-center items-center h-96">
-    Loading...
-  </div>
-  <DataTable
-    :key="travels.length"
-    v-if="!loading && travels"
-    :columns="columns"
-    :data="travels"
-    createLink="travels/create"
-  />
-</template> -->
-
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { RecentSales } from '@/components/recent-sales';
 import {
   Card,
@@ -260,4 +140,35 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
       </div>
     </TabsContent>
   </Tabs>
+</template> -->
+
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import {
+  travelColumns,
+  TravelsDataTable,
+} from '@/components/travels-data-table';
+import { type Travel } from '@/models';
+import { type ApiWrapper } from '@/types';
+
+const data = ref<Travel[]>([]);
+const loading = ref(false);
+
+async function getData(): Promise<Travel[]> {
+  loading.value = true;
+  const { data } = await $fetch<ApiWrapper<Travel[]>>('api/travels');
+  loading.value = false;
+  return data ?? [];
+}
+
+onMounted(async () => {
+  data.value = await getData();
+});
+</script>
+
+<template>
+  <div class="flex items-center justify-between space-y-2 pb-4">
+    <h2 class="text-3xl font-bold tracking-tight">Travels</h2>
+  </div>
+  <TravelsDataTable :key="data.length" :columns="travelColumns" :data="data" />
 </template>
