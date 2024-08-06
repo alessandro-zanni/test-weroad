@@ -11,6 +11,9 @@
     "format": "prettier . --write"
   },
   "dependencies": {
+    "@unovis/ts": "^1.4.3",
+    "@unovis/vue": "^1.4.3",
+    "@vueuse/core": "^10.11.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-vue-next": "^0.424.0",
@@ -26,6 +29,7 @@
     "@iconify/vue": "^4.1.2",
     "@nuxtjs/color-mode": "^3.4.2",
     "@nuxtjs/tailwindcss": "^6.12.1",
-    "prettier": "3.3.3"
+    "prettier": "3.3.3",
+    "typescript": "^5.5.4"
   }
 }
