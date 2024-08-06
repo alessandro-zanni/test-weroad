@@ -1,5 +1,7 @@
 <template>
-  <div class="flex items-center text-lg font-medium border py-1 px-2 rounded-md">
+  <div
+    class="flex items-center text-lg font-medium border py-1 px-2 rounded-md"
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
