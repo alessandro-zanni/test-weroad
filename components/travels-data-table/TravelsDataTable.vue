@@ -23,7 +23,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { valueUpdater } from '@/lib/utils';
+import {
+  DataTablePagination,
+  DataTableViewOptions,
+} from '@/components/ui/data-table';
 import DataTableDropdownActions from './DataTableDropdownActions.vue';
+import { Button } from '@/components/ui/button';
 
 const props = defineProps<{
   columns: ColumnDef<TData, TValue>[];
@@ -75,14 +80,20 @@ const table = useVueTable({
 
 <template>
   <div>
-    <div class="flex items-center pb-4">
+    <div class="flex items-center justify-between space-x-2 pb-4">
       <Input
         class="max-w-sm"
         placeholder="Filter names..."
         :model-value="table.getColumn('name')?.getFilterValue() as string"
         @update:model-value="table.getColumn('name')?.setFilterValue($event)"
       />
-      <DataTableViewOptions :table="table" />
+
+      <div class="flex items-center space-x-2">
+        <DataTableViewOptions :table="table" />
+        <NuxtLink to="/travels/create">
+          <Button>Add travel</Button>
+        </NuxtLink>
+      </div>
     </div>
     <div class="border rounded-md">
       <Table>

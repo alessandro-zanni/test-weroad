@@ -26,17 +26,11 @@ const { table, row, apiEndpoint } = defineProps<Props>();
 
 const router = useRouter();
 
-async function handleDeleteConfirm(id: number) {
-  if (window.confirm('Are you sure you want to delete this row?')) {
-    handleDelete(id);
-  }
-}
-
-async function handleDelete(id: number) {
+async function handleDelete() {
   const promise = new Promise<'ok' | 'ko'>(async (resolve, reject) => {
     try {
       const { status } = await $fetch<{ status: 'ok' | 'ko' }>(
-        `api/${apiEndpoint}/${row.id}`,
+        `/api/${apiEndpoint}/${row.id}`,
         { method: 'DELETE' },
       );
       if (status === 'ok') {
@@ -67,6 +61,12 @@ async function handleDelete(id: number) {
       },
     }),
   });
+}
+
+async function handleDeleteConfirm() {
+  if (window.confirm('Are you sure you want to delete this row?')) {
+    await handleDelete();
+  }
 }
 </script>
 

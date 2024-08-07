@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { h } from 'vue';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
+import { toast } from 'vue-sonner';
 
+import type { Travel } from '@/models';
 import { Button } from '@/components/ui/button';
 import {
   FormControl,
@@ -13,12 +14,22 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { toast } from 'vue-sonner';
+import {
+  NumberField,
+  NumberFieldContent,
+  NumberFieldDecrement,
+  NumberFieldIncrement,
+  NumberFieldInput,
+} from '@/components/ui/number-field';
+import type { ApiWrapper } from '~/types';
 
 interface Props {
   isCreate: boolean;
+  data: Travel;
 }
-const { isCreate } = defineProps<Props>();
+const { isCreate, data } = defineProps<Props>();
+
+const router = useRouter();
 
 const formSchema = toTypedSchema(
   z.object({
@@ -32,88 +43,183 @@ const formSchema = toTypedSchema(
   }),
 );
 
-const { handleSubmit } = useForm({
+const { handleSubmit, setFieldValue } = useForm({
   validationSchema: formSchema,
+  initialValues: data,
 });
 
+async function createOrUpdateTravel(values: Partial<Travel>) {
+  return new Promise<Travel>(async (resolve, reject) => {
+    try {
+      if (isCreate) {
+        // Create
+        const { status, data: createdData } = await $fetch<ApiWrapper<Travel>>(
+          `/api/travels`,
+          { method: 'POST', body: values },
+        );
+        if (status === 'ok') {
+          resolve(createdData);
+        } else {
+          reject(status);
+        }
+      } else {
+        // Edit
+        const { status, data: editedData } = await $fetch<ApiWrapper<Travel>>(
+          `/api/travels/${data.id}`,
+          { method: 'PUT', body: values },
+        );
+        if (status === 'ok') {
+          resolve(editedData);
+        } else {
+          reject(status);
+        }
+      }
+    } catch (_) {
+      reject('ko');
+    }
+  });
+}
+
 const onSubmit = handleSubmit((values) => {
-  toast('You submitted the following values:', {
-    description: h(
-      'pre',
-      { class: 'mt-2 w-[340px] rounded-md bg-slate-950 p-4' },
-      h('code', { class: 'text-white' }, JSON.stringify(values, null, 2)),
-    ),
+  const promise = createOrUpdateTravel(values);
+
+  toast.promise(promise, {
+    loading: 'Loading...',
+    success: () => {
+      router.push('/travels');
+      return isCreate ? 'Travel created' : 'Travel edited';
+    },
+    error: () => ({
+      name: 'Uh oh! Something went wrong.',
+      description: 'There was a problem with your request.',
+      action: {
+        label: 'Try again',
+        onClick: onSubmit,
+      },
+    }),
   });
 });
 </script>
 
 <template>
-  <form class="w-2/3 space-y-6" @submit="onSubmit">
-    <FormField v-slot="{ componentField }" name="name">
-      <FormItem>
-        <FormLabel>Name</FormLabel>
-        <FormControl>
-          <Input type="text" v-bind="componentField" />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="departure">
-      <FormItem>
-        <FormLabel>Departure</FormLabel>
-        <FormControl>
-          <Input type="date" v-bind="componentField" />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="return">
-      <FormItem>
-        <FormLabel>Return</FormLabel>
-        <FormControl>
-          <Input type="date" v-bind="componentField" />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="picture">
-      <FormItem>
-        <FormLabel>Picture</FormLabel>
-        <FormControl>
-          <Input type="text" v-bind="componentField" />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="description">
-      <FormItem>
-        <FormLabel>Description</FormLabel>
-        <FormControl>
-          <Input type="text" v-bind="componentField" />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="price">
-      <FormItem>
-        <FormLabel>Price</FormLabel>
-        <FormControl>
-          <Input type="text" v-bind="componentField" />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="rating">
-      <FormItem>
-        <FormLabel>Rating</FormLabel>
-        <FormControl>
-          <Input type="text" v-bind="componentField" />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <Button type="submit">{{
-      isCreate ? 'Create' : 'Edit'
-    }}</Button>
-  </form>
+  <ClientOnly>
+    <form class="w-2/3 space-y-6" @submit="onSubmit">
+      <FormField v-slot="{ componentField }" name="name">
+        <FormItem>
+          <FormLabel>Name</FormLabel>
+          <FormControl>
+            <Input type="text" v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+      <FormField v-slot="{ componentField }" name="departure">
+        <FormItem>
+          <FormLabel>Departure</FormLabel>
+          <FormControl>
+            <Input type="date" v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+      <FormField v-slot="{ componentField }" name="return">
+        <FormItem>
+          <FormLabel>Return</FormLabel>
+          <FormControl>
+            <Input type="date" v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+      <FormField v-slot="{ componentField }" name="picture">
+        <FormItem>
+          <FormLabel>Picture</FormLabel>
+          <FormControl>
+            <Input type="text" v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+      <FormField v-slot="{ componentField }" name="description">
+        <FormItem>
+          <FormLabel>Description</FormLabel>
+          <FormControl>
+            <Input type="text" v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+      <FormField name="price">
+        <FormItem>
+          <FormLabel>Price</FormLabel>
+          <NumberField
+            class="gap-2"
+            :min="0"
+            :default-value="data.price"
+            :step="0.01"
+            :format-options="{
+              style: 'currency',
+              currency: 'EUR',
+              currencyDisplay: 'symbol',
+            }"
+            @update:model-value="
+              (v?: number) => {
+                if (v) {
+                  setFieldValue('price', v);
+                } else {
+                  setFieldValue('price', undefined);
+                }
+              }
+            "
+          >
+            <NumberFieldContent>
+              <NumberFieldDecrement />
+              <FormControl>
+                <NumberFieldInput />
+              </FormControl>
+              <NumberFieldIncrement />
+            </NumberFieldContent>
+          </NumberField>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+      <FormField name="rating">
+        <FormItem>
+          <FormLabel>Rating</FormLabel>
+          <NumberField
+            class="gap-2"
+            :min="1"
+            :max="5"
+            :default-value="data.rating"
+            @update:model-value="
+              (v?: number) => {
+                if (v) {
+                  setFieldValue('rating', v);
+                } else {
+                  setFieldValue('rating', undefined);
+                }
+              }
+            "
+          >
+            <NumberFieldContent>
+              <NumberFieldDecrement />
+              <FormControl>
+                <NumberFieldInput />
+              </FormControl>
+              <NumberFieldIncrement />
+            </NumberFieldContent>
+          </NumberField>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+      <Button type="submit">{{ isCreate ? 'Create' : 'Edit' }}</Button>
+    </form>
+  </ClientOnly>
 </template>

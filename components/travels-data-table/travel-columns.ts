@@ -7,7 +7,7 @@ import { DataTableColumnHeader } from '@/components/ui/data-table';
 import DataTableNameColumn from './DataTableNameColumn.vue';
 import DataTableRatingColumn from './DataTableRatingColumn.vue';
 
-const columns: ColumnDef<Travel>[] = [
+export const travelColumns: ColumnDef<Travel>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) =>
@@ -82,5 +82,3 @@ const columns: ColumnDef<Travel>[] = [
     enableHiding: false,
   },
 ];
-
-export default columns;
