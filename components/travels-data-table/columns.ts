@@ -4,7 +4,6 @@ import { h } from 'vue';
 import type { Travel } from '@/models';
 import { formatPrice } from '@/lib/utils';
 import { DataTableColumnHeader } from '@/components/ui/data-table';
-import DataTableDropdownAction from './DataTableDropdownAction.vue';
 import DataTableNameColumn from './DataTableNameColumn.vue';
 import DataTableRatingColumn from './DataTableRatingColumn.vue';
 
@@ -81,16 +80,6 @@ const columns: ColumnDef<Travel>[] = [
   {
     id: 'actions',
     enableHiding: false,
-    cell: ({ row }) => {
-      const travel = row.original;
-      return h(
-        'div',
-        { class: 'relative' },
-        h(DataTableDropdownAction, {
-          travel,
-        }),
-      );
-    },
   },
 ];
 

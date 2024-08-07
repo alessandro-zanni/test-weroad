@@ -12,8 +12,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-interface DataTableColumnHeaderProps<T = any> {
-  column: Column<any, any>;
+interface DataTableColumnHeaderProps<TData = any, TValue = any> {
+  column: Column<TData, TValue>;
   title: string;
 }
 

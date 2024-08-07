@@ -23,10 +23,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { valueUpdater } from '@/lib/utils';
+import DataTableDropdownActions from './DataTableDropdownActions.vue';
 
 const props = defineProps<{
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  apiEndpoint: string;
 }>();
 
 const sorting = ref<SortingState>([]);
@@ -58,6 +60,14 @@ const table = useVueTable({
     },
     get columnVisibility() {
       return columnVisibility.value;
+    },
+  },
+  meta: {
+    deleteRow: (id: number) => {
+      const index = props.data.findIndex((row) => (row as any).id === id);
+      if (index !== -1) {
+        props.data.splice(index, 1);
+      }
     },
   },
 });
@@ -99,9 +109,18 @@ const table = useVueTable({
             >
               <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
                 <FlexRender
+                  v-if="cell.column.id !== 'actions'"
                   :render="cell.column.columnDef.cell"
                   :props="cell.getContext()"
                 />
+                <div class="text-right">
+                  <DataTableDropdownActions
+                    v-if="cell.column.id === 'actions'"
+                    :table="table"
+                    :row="row.original"
+                    :apiEndpoint="props.apiEndpoint"
+                  />
+                </div>
               </TableCell>
             </TableRow>
           </template>
