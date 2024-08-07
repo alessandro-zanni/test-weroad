@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import MainNav from './components/MainNav.vue';
-import ColorModeToggle from './components/ColorModeToggle.vue';
 import Logo from './components/Logo.vue';
 import UserNav from './components/UserNav.vue';
 </script>
@@ -12,7 +11,6 @@ import UserNav from './components/UserNav.vue';
         <Logo />
         <MainNav class="mx-6" />
         <div class="ml-auto flex items-center space-x-4">
-          <ColorModeToggle />
           <UserNav />
         </div>
       </div>

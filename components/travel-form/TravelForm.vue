@@ -5,6 +5,7 @@ import * as z from 'zod';
 import { toast } from 'vue-sonner';
 
 import type { Travel } from '@/models';
+import type { ApiWrapper } from '@/types';
 import { Button } from '@/components/ui/button';
 import {
   FormControl,
@@ -14,6 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   NumberField,
   NumberFieldContent,
@@ -21,7 +23,6 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
 } from '@/components/ui/number-field';
-import type { ApiWrapper } from '~/types';
 
 interface Props {
   isCreate: boolean;
@@ -103,7 +104,7 @@ const onSubmit = handleSubmit((values) => {
 
 <template>
   <ClientOnly>
-    <form class="w-2/3 space-y-6" @submit="onSubmit">
+    <form class="w-full md:w-2/3 lg:w-1/2 space-y-6" @submit="onSubmit">
       <FormField v-slot="{ componentField }" name="name">
         <FormItem>
           <FormLabel>Name</FormLabel>
@@ -148,7 +149,7 @@ const onSubmit = handleSubmit((values) => {
         <FormItem>
           <FormLabel>Description</FormLabel>
           <FormControl>
-            <Input type="text" v-bind="componentField" />
+            <Textarea v-bind="componentField" />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -165,7 +166,7 @@ const onSubmit = handleSubmit((values) => {
             :format-options="{
               style: 'currency',
               currency: 'EUR',
-              currencyDisplay: 'symbol',
+              currencyDisplay: 'code',
             }"
             @update:model-value="
               (v?: number) => {
@@ -219,7 +220,9 @@ const onSubmit = handleSubmit((values) => {
         </FormItem>
       </FormField>
 
-      <Button type="submit">{{ isCreate ? 'Create' : 'Edit' }}</Button>
+      <Button type="submit" size="lg" class="w-full">{{
+        isCreate ? 'Create' : 'Edit'
+      }}</Button>
     </form>
   </ClientOnly>
 </template>

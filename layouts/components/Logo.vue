@@ -10,12 +10,12 @@
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      class="mr-2 h-6 w-6"
+      class="h-6 w-6"
     >
       <path
         d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"
       />
     </svg>
-    Acme Inc
+    <span class="hidden md:inline-block ml-2">Acme Inc</span>
   </div>
 </template>

@@ -24,10 +24,10 @@ import {
 } from '@/components/ui/table';
 import { valueUpdater } from '@/lib/utils';
 import {
+  DataTableDropdownActions,
   DataTablePagination,
   DataTableViewOptions,
 } from '@/components/ui/data-table';
-import DataTableDropdownActions from './DataTableDropdownActions.vue';
 import { Button } from '@/components/ui/button';
 
 const props = defineProps<{

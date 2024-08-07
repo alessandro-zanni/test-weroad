@@ -11,6 +11,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import ColorModeToggle from './ColorModeToggle.vue';
 </script>
 
 <template>
@@ -38,15 +39,7 @@ import {
           Profile
           <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          Billing
-          <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          Settings
-          <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem>New Team</DropdownMenuItem>
+        <ColorModeToggle />
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuItem>
