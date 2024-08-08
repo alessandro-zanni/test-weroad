@@ -32,33 +32,39 @@ const form = useForm({
 });
 
 async function createOrUpdateTravel(values: Partial<Travel>) {
-  return new Promise<Travel>(async (resolve, reject) => {
-    try {
-      if (isCreate) {
-        // Create
-        const { status, data: createdData } = await $fetch<ApiWrapper<Travel>>(
-          `/api/travels`,
-          { method: 'POST', body: values },
-        );
-        if (status === 'ok') {
-          resolve(createdData);
-        } else {
-          reject(status);
-        }
-      } else {
-        // Edit
-        const { status, data: editedData } = await $fetch<ApiWrapper<Travel>>(
-          `/api/travels/${data.id}`,
-          { method: 'PUT', body: values },
-        );
-        if (status === 'ok') {
-          resolve(editedData);
-        } else {
-          reject(status);
-        }
-      }
-    } catch (_) {
-      reject('ko');
+  return new Promise<Travel>((resolve, reject) => {
+    if (isCreate) {
+      // Create
+      $fetch<ApiWrapper<Travel>>(`/api/travels`, {
+        method: 'POST',
+        body: values,
+      })
+        .then(({ status, data: createdData }) => {
+          if (status === 'ok') {
+            resolve(createdData);
+          } else {
+            reject(status);
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    } else {
+      // Edit
+      $fetch<ApiWrapper<Travel>>(`/api/travels/${data.id}`, {
+        method: 'PUT',
+        body: values,
+      })
+        .then(({ status, data: editedData }) => {
+          if (status === 'ok') {
+            resolve(editedData);
+          } else {
+            reject(status);
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
     }
   });
 }

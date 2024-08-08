@@ -60,8 +60,8 @@ async function createOrUpdateBooking(values: Partial<Booking>) {
             reject(status);
           }
         })
-        .catch(() => {
-          reject('ko');
+        .catch((err) => {
+          reject(err);
         });
     } else {
       // Edit
@@ -76,8 +76,8 @@ async function createOrUpdateBooking(values: Partial<Booking>) {
             reject(status);
           }
         })
-        .catch(() => {
-          reject('ko');
+        .catch((err) => {
+          reject(err);
         });
     }
   });

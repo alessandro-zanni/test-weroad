@@ -18,7 +18,7 @@ defineProps<FieldProps>();
 
 const inputFile = ref<File>();
 async function parseFileAsString(file: File | undefined): Promise<string> {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {

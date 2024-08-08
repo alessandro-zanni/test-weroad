@@ -22,20 +22,20 @@ const { table, row, apiEndpoint } = defineProps<Props>();
 const router = useRouter();
 
 async function handleDelete() {
-  const promise = new Promise<'ok' | 'ko'>(async (resolve, reject) => {
-    try {
-      const { status } = await $fetch<{ status: 'ok' | 'ko' }>(
-        `/api/${apiEndpoint}/${row.id}`,
-        { method: 'DELETE' },
-      );
-      if (status === 'ok') {
-        resolve(status);
-      } else {
-        reject(status);
-      }
-    } catch (_) {
-      reject('ko');
-    }
+  const promise = new Promise<'ok' | 'ko'>((resolve, reject) => {
+    $fetch<{ status: 'ok' | 'ko' }>(`/api/${apiEndpoint}/${row.id}`, {
+      method: 'DELETE',
+    })
+      .then(({ status }) => {
+        if (status === 'ok') {
+          resolve(status);
+        } else {
+          reject(status);
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
   });
 
   toast.promise(promise, {
