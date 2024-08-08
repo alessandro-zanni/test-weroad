@@ -1,5 +1,6 @@
 <template>
-  <div
+  <NuxtLink
+    to="/"
     class="flex items-center text-lg font-medium border py-1 px-2 rounded-md"
   >
     <svg
@@ -17,5 +18,5 @@
       />
     </svg>
     <span class="hidden md:inline-block ml-2">Acme Inc</span>
-  </div>
+  </NuxtLink>
 </template>

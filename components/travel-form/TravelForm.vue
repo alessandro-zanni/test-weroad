@@ -7,6 +7,7 @@ import { toast } from 'vue-sonner';
 import { AutoForm } from '@/components/ui/auto-form';
 import type { Travel } from '@/models';
 import type { ApiWrapper } from '@/types';
+import PictureField from './PictureField.vue';
 
 interface Props {
   isCreate: boolean;
@@ -107,6 +108,10 @@ function onSubmit(values: Record<string, any>) {
           inputProps: {
             type: 'date',
           },
+        },
+        picture: {
+          label: 'Picture',
+          component: PictureField,
         },
         description: { component: 'textarea' },
         price: {

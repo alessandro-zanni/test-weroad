@@ -16,6 +16,7 @@ const navItems = [
       :key="item.title"
       :to="item.href"
       class="text-sm font-medium transition-colors hover:text-primary"
+      active-class="underline underline-offset-4"
     >
       {{ item.title }}
     </NuxtLink>
