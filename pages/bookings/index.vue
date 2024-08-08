@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { type Travel } from '@/models';
+import { type Booking } from '@/models';
 import { type ApiWrapper } from '@/types';
 import { Spinner } from '@/components/ui/spinner';
-import { travelColumns } from '@/components/travels-data-table/travel-columns';
+import { bookingColumns } from '@/components/bookings-data-table/booking-columns';
 
-const data = ref<Travel[]>([]);
+const data = ref<Booking[]>([]);
 const loading = ref(true);
 
-async function getData(): Promise<Travel[]> {
+async function getData(): Promise<Booking[]> {
   loading.value = true;
-  const { data } = await $fetch<ApiWrapper<Travel[]>>('/api/travels');
+  const { data } = await $fetch<ApiWrapper<Booking[]>>('/api/bookings');
   loading.value = false;
   return data ?? [];
 }
@@ -28,11 +28,11 @@ onMounted(async () => {
   <div v-if="loading" class="flex justify-center items-center h-48">
     <Spinner />
   </div>
-  <TravelsDataTable
+  <BookingsDataTable
     v-if="!loading"
     :key="data.length"
-    :columns="travelColumns"
+    :columns="bookingColumns"
     :data="data"
-    apiEndpoint="travels"
+    apiEndpoint="bookings"
   />
 </template>

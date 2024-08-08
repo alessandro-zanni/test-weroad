@@ -1,5 +1,5 @@
-import { travelsData } from '@/server/travelsData';
 import { delay } from '@/lib/utils';
+import { travelsData } from '@/server/travels-data';
 
 export default defineEventHandler(async (event) => {
   // return a travel by id

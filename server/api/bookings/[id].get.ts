@@ -1,5 +1,5 @@
-import { bookingsData } from '@/server/bookingsData';
 import { delay } from '@/lib/utils';
+import { getBookingsData } from '@/server/get-bookings-data';
 
 export default defineEventHandler(async (event) => {
   // return a booking by id
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
 
   await delay(500);
 
-  const bookings = bookingsData;
+  const bookings = getBookingsData();
   const booking = bookings.find((booking) => booking.id === numId);
   return {
     status: 'ok',

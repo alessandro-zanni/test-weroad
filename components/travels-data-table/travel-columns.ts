@@ -80,5 +80,6 @@ export const travelColumns: ColumnDef<Travel>[] = [
   {
     id: 'actions',
     enableHiding: false,
+    header: 'Actions',
   },
 ];
