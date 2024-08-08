@@ -166,7 +166,7 @@ const onSubmit = handleSubmit((values) => {
             :format-options="{
               style: 'currency',
               currency: 'EUR',
-              currencyDisplay: 'code',
+              currencyDisplay: 'symbol',
             }"
             @update:model-value="
               (v?: number) => {

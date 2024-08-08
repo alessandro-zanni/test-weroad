@@ -12,7 +12,6 @@ const range = (len: number) => {
 const newTravel = (): Travel => {
   return {
     id: 0,
-
     name: faker.location.city(),
     departure: faker.date.recent().toISOString(),
     return: faker.date.future().toISOString(),

@@ -83,9 +83,9 @@ const table = useVueTable({
     <div class="flex items-center justify-between space-x-2 pb-4">
       <Input
         class="max-w-sm"
-        placeholder="Filter names..."
-        :model-value="table.getColumn('name')?.getFilterValue() as string"
-        @update:model-value="table.getColumn('name')?.setFilterValue($event)"
+        placeholder="Filter travel names..."
+        :model-value="table.getColumn('travel')?.getFilterValue() as string"
+        @update:model-value="table.getColumn('travel')?.setFilterValue($event)"
       />
 
       <div class="flex items-center space-x-2">

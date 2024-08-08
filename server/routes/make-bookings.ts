@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { Booking } from '@/models/booking';
-import { PaymentType } from '@/types';
+import { GenderType, PaymentType } from '@/types';
 
 const range = (len: number) => {
   const arr: number[] = [];
@@ -19,7 +19,7 @@ const newBooking = (): Booking => {
       email: faker.internet.email(),
       phone: faker.phone.number(),
       age: faker.number.int({ min: 18, max: 99 }),
-      gender: faker.person.sexType(),
+      gender: faker.person.sexType() as GenderType,
     },
     paymentType: faker.helpers.enumValue(PaymentType),
     note: faker.lorem.sentence(),
