@@ -126,7 +126,7 @@ async function getData(): Promise<Travel[]> {
 }
 
 onMounted(async () => {
-  travels.value = (await getData()).slice(0, 20);
+  travels.value = (await getData()).slice(0, 20); // Limit to 20
 });
 
 async function createOrUpdateBooking(values: Partial<Booking>) {
@@ -334,46 +334,103 @@ function onSubmit(values: Booking) {
           </template>
 
           <template v-if="stepIndex === 2">
-            <FormField v-slot="{ componentField }" name="password">
+            <FormField v-slot="{ componentField }" name="customer.name">
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input type="password" v-bind="componentField" />
+                  <Input v-bind="componentField" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             </FormField>
 
-            <FormField v-slot="{ componentField }" name="confirmPassword">
+            <FormField v-slot="{ componentField }" name="customer.email">
               <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="password" v-bind="componentField" />
+                  <Input type="email" v-bind="componentField" />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+
+            <FormField v-slot="{ componentField }" name="customer.phone">
+              <FormItem>
+                <FormLabel>Phone</FormLabel>
+                <FormControl>
+                  <Input v-bind="componentField" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+
+            <FormField v-slot="{ componentField }" name="customer.age">
+              <FormItem>
+                <FormLabel>Age</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    :min="18"
+                    :max="99"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+
+            <FormField v-slot="{ componentField }" name="customer.gender">
+              <FormItem>
+                <FormLabel>Gender</FormLabel>
+                <Select v-bind="componentField">
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a gender" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             </FormField>
           </template>
 
           <template v-if="stepIndex === 3">
-            <FormField v-slot="{ componentField }" name="favoriteDrink">
+            <FormField v-slot="{ componentField }" name="paymentType">
               <FormItem>
-                <FormLabel>Drink</FormLabel>
-
+                <FormLabel>Payment type</FormLabel>
                 <Select v-bind="componentField">
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a drink" />
+                      <SelectValue placeholder="Select a payment" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="coffee"> Coffe </SelectItem>
-                      <SelectItem value="tea"> Tea </SelectItem>
-                      <SelectItem value="soda"> Soda </SelectItem>
+                      <SelectItem value="Credit transfer"
+                        >Credit transfer</SelectItem
+                      >
+                      <SelectItem value="Paypal">Paypal</SelectItem>
+                      <SelectItem value="Revolut">Revolut</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+
+            <FormField v-slot="{ componentField }" name="note">
+              <FormItem>
+                <FormLabel>Note</FormLabel>
+                <FormControl>
+                  <Textarea v-bind="componentField" />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             </FormField>
