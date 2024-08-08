@@ -1,28 +1,12 @@
 <script setup lang="ts">
+import * as z from 'zod';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
-import * as z from 'zod';
+import { Button } from '@/components/ui/button';
 import { toast } from 'vue-sonner';
-
+import { AutoForm } from '@/components/ui/auto-form';
 import type { Travel } from '@/models';
 import type { ApiWrapper } from '@/types';
-import { Button } from '@/components/ui/button';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  NumberField,
-  NumberFieldContent,
-  NumberFieldDecrement,
-  NumberFieldIncrement,
-  NumberFieldInput,
-} from '@/components/ui/number-field';
 
 interface Props {
   isCreate: boolean;
@@ -32,20 +16,18 @@ const { isCreate, data } = defineProps<Props>();
 
 const router = useRouter();
 
-const formSchema = toTypedSchema(
-  z.object({
-    name: z.string().min(2).max(255),
-    departure: z.string().date(),
-    return: z.string().date(),
-    picture: z.string().max(255),
-    description: z.string().min(2).max(1000),
-    price: z.number().gt(0),
-    rating: z.number().int().min(1).max(5),
-  }),
-);
+const schema = z.object({
+  name: z.string().min(2).max(255).describe('Name'),
+  departure: z.string().date().describe('Departure'),
+  return: z.string().date().describe('Return'),
+  picture: z.string().max(255).describe('Picture'),
+  description: z.string().min(2).max(1000).describe('Description'),
+  price: z.coerce.number().gt(0).describe('Price'),
+  rating: z.coerce.number().int().min(1).max(5).default(1).describe('Rating'),
+});
 
-const { handleSubmit, setFieldValue } = useForm({
-  validationSchema: formSchema,
+const form = useForm({
+  validationSchema: toTypedSchema(schema),
   initialValues: data,
 });
 
@@ -81,7 +63,7 @@ async function createOrUpdateTravel(values: Partial<Travel>) {
   });
 }
 
-const onSubmit = handleSubmit((values) => {
+function onSubmit(values: Record<string, any>) {
   const promise = createOrUpdateTravel(values);
 
   toast.promise(promise, {
@@ -99,130 +81,40 @@ const onSubmit = handleSubmit((values) => {
       },
     }),
   });
-});
+}
 </script>
 
 <template>
   <ClientOnly>
-    <form class="w-full md:w-2/3 lg:w-1/2 space-y-6" @submit="onSubmit">
-      <FormField v-slot="{ componentField }" name="name">
-        <FormItem>
-          <FormLabel>Name</FormLabel>
-          <FormControl>
-            <Input type="text" v-bind="componentField" />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField v-slot="{ componentField }" name="departure">
-        <FormItem>
-          <FormLabel>Departure</FormLabel>
-          <FormControl>
-            <Input type="date" v-bind="componentField" />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField v-slot="{ componentField }" name="return">
-        <FormItem>
-          <FormLabel>Return</FormLabel>
-          <FormControl>
-            <Input type="date" v-bind="componentField" />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField v-slot="{ componentField }" name="picture">
-        <FormItem>
-          <FormLabel>Picture</FormLabel>
-          <FormControl>
-            <Input type="text" v-bind="componentField" />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField v-slot="{ componentField }" name="description">
-        <FormItem>
-          <FormLabel>Description</FormLabel>
-          <FormControl>
-            <Textarea v-bind="componentField" />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField name="price">
-        <FormItem>
-          <FormLabel>Price</FormLabel>
-          <NumberField
-            class="gap-2"
-            :min="0"
-            :default-value="data.price"
-            :step="0.01"
-            :format-options="{
-              style: 'currency',
-              currency: 'EUR',
-              currencyDisplay: 'symbol',
-            }"
-            @update:model-value="
-              (v?: number) => {
-                if (v) {
-                  setFieldValue('price', v);
-                } else {
-                  setFieldValue('price', undefined);
-                }
-              }
-            "
-          >
-            <NumberFieldContent>
-              <NumberFieldDecrement />
-              <FormControl>
-                <NumberFieldInput />
-              </FormControl>
-              <NumberFieldIncrement />
-            </NumberFieldContent>
-          </NumberField>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField name="rating">
-        <FormItem>
-          <FormLabel>Rating</FormLabel>
-          <NumberField
-            class="gap-2"
-            :min="1"
-            :max="5"
-            :default-value="data.rating"
-            @update:model-value="
-              (v?: number) => {
-                if (v) {
-                  setFieldValue('rating', v);
-                } else {
-                  setFieldValue('rating', undefined);
-                }
-              }
-            "
-          >
-            <NumberFieldContent>
-              <NumberFieldDecrement />
-              <FormControl>
-                <NumberFieldInput />
-              </FormControl>
-              <NumberFieldIncrement />
-            </NumberFieldContent>
-          </NumberField>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
+    <AutoForm
+      class="w-full md:w-2/3 lg:w-1/2 space-y-6"
+      :schema="schema"
+      :form="form"
+      @submit="onSubmit"
+      :field-config="{
+        departure: {
+          inputProps: {
+            type: 'date',
+          },
+        },
+        return: {
+          inputProps: {
+            type: 'date',
+          },
+        },
+        description: { component: 'textarea' },
+        price: {
+          inputProps: {
+            min: 0,
+            step: 0.01,
+          },
+        },
+        rating: { inputProps: { min: 1, max: 5 } },
+      }"
+    >
       <Button type="submit" size="lg" class="w-full">{{
         isCreate ? 'Create' : 'Edit'
       }}</Button>
-    </form>
+    </AutoForm>
   </ClientOnly>
 </template>

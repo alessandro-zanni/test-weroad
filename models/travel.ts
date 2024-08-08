@@ -9,13 +9,10 @@ export class Travel {
   rating!: number;
 
   constructor(data?: Partial<Travel>) {
-    Object.assign(
-      this,
-      {
-        ...data,
-        departure: data?.departure?.split('T')[0],
-        return: data?.return?.split('T')[0],
-      } || {},
-    );
+    Object.assign(this, {
+      ...data,
+      departure: data?.departure?.split('T')[0],
+      return: data?.return?.split('T')[0],
+    });
   }
 }

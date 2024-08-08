@@ -9,6 +9,6 @@ export class Customer {
   gender!: GenderType;
 
   constructor(data?: Partial<Customer>) {
-    Object.assign(this, data || {});
+    Object.assign(this, data ?? {});
   }
 }

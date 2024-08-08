@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import {
-  ClipboardCopyIcon,
-  MoreHorizontal,
-  PencilIcon,
-  Trash2Icon,
-} from 'lucide-vue-next';
+import { MoreHorizontal, PencilIcon, Trash2Icon } from 'lucide-vue-next';
 import {
   DropdownMenu,
   DropdownMenuContent,

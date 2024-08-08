@@ -37,44 +37,48 @@ const formSchema = toTypedSchema(
     }),
     paymentType: z.nativeEnum(PaymentType),
     note: z.string().min(2).max(1000).optional(),
-    price: z.number().gt(0),
-    rating: z.number().int().min(1).max(5),
   }),
 );
 
-const { handleSubmit, setFieldValue } = useForm({
+const { handleSubmit } = useForm({
   validationSchema: formSchema,
   initialValues: data,
 });
 
 async function createOrUpdateBooking(values: Partial<Booking>) {
-  return new Promise<Booking>(async (resolve, reject) => {
-    try {
-      if (isCreate) {
-        // Create
-        const { status, data: createdData } = await $fetch<ApiWrapper<Booking>>(
-          `/api/bookings`,
-          { method: 'POST', body: values },
-        );
-        if (status === 'ok') {
-          resolve(createdData);
-        } else {
-          reject(status);
-        }
-      } else {
-        // Edit
-        const { status, data: editedData } = await $fetch<ApiWrapper<Booking>>(
-          `/api/bookings/${data.id}`,
-          { method: 'PUT', body: values },
-        );
-        if (status === 'ok') {
-          resolve(editedData);
-        } else {
-          reject(status);
-        }
-      }
-    } catch (_) {
-      reject('ko');
+  return new Promise<Booking>((resolve, reject) => {
+    if (isCreate) {
+      // Create
+      $fetch<ApiWrapper<Booking>>(`/api/bookings`, {
+        method: 'POST',
+        body: values,
+      })
+        .then(({ status, data: createdData }) => {
+          if (status === 'ok') {
+            resolve(createdData);
+          } else {
+            reject(status);
+          }
+        })
+        .catch(() => {
+          reject('ko');
+        });
+    } else {
+      // Edit
+      $fetch<ApiWrapper<Booking>>(`/api/bookings/${data.id}`, {
+        method: 'PUT',
+        body: values,
+      })
+        .then(({ status, data: editedData }) => {
+          if (status === 'ok') {
+            resolve(editedData);
+          } else {
+            reject(status);
+          }
+        })
+        .catch(() => {
+          reject('ko');
+        });
     }
   });
 }
@@ -123,9 +127,9 @@ const onSubmit = handleSubmit((values) => {
         </FormItem>
       </FormField>
 
-      <Button type="submit" size="lg" class="w-full">{{
-        isCreate ? 'Create' : 'Edit'
-      }}</Button>
+      <Button type="submit" size="lg" class="w-full">
+        {{ isCreate ? 'Create' : 'Edit' }}
+      </Button>
     </form>
   </ClientOnly>
 </template>

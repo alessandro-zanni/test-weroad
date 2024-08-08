@@ -13,6 +13,6 @@ export class Booking {
   travel?: Travel;
 
   constructor(data?: Partial<Booking>) {
-    Object.assign(this, data || {});
+    Object.assign(this, data ?? {});
   }
 }
