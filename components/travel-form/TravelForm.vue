@@ -40,7 +40,7 @@ const formSchema = toTypedSchema(
     picture: z.string().max(255),
     description: z.string().min(2).max(1000),
     price: z.number().gt(0),
-    rating: z.number().min(1).max(5),
+    rating: z.number().int().min(1).max(5),
   }),
 );
 

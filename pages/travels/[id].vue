@@ -33,5 +33,10 @@ onMounted(async () => {
   <div v-if="loading" class="flex justify-center items-center h-48">
     <Spinner />
   </div>
-  <TravelForm :key="data" v-if="!loading" :isCreate="isCreate" :data="data" />
+  <TravelForm
+    :key="data.id"
+    v-if="!loading"
+    :isCreate="isCreate"
+    :data="data"
+  />
 </template>
