@@ -22,7 +22,7 @@ defineProps<FieldProps>();
         v-if="slotProps.value"
         :src="slotProps.value"
         alt="Travel"
-        class="w-96 max-w-full rounded-md"
+        class="w-96 max-w-full rounded-md aspect-square object-cover"
       />
       <FormControl>
         <Input v-bind="slotProps.componentField" />

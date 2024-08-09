@@ -48,9 +48,4 @@ export const bookingColumns: ColumnDef<Booking>[] = [
         title: 'Note',
       }),
   },
-  {
-    id: 'actions',
-    enableHiding: false,
-    header: 'Actions',
-  },
 ];

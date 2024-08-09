@@ -7,79 +7,84 @@ import { DataTableColumnHeader } from '@/components/ui/data-table';
 import DataTableNameColumn from './DataTableNameColumn.vue';
 import DataTableRatingColumn from './DataTableRatingColumn.vue';
 
-export const travelColumns: ColumnDef<Travel>[] = [
-  {
-    accessorKey: 'name',
-    header: ({ column }) =>
-      h(DataTableColumnHeader, {
-        column: column,
-        title: 'Name',
-      }),
-    cell: ({ row }) => {
-      return h(DataTableNameColumn, {
-        picture: row.original.picture,
-        name: row.original.name,
-      });
+export const travelColumns = (showActions = true): ColumnDef<Travel>[] => {
+  const cols: ColumnDef<Travel>[] = [
+    {
+      accessorKey: 'name',
+      header: ({ column }) =>
+        h(DataTableColumnHeader, {
+          column: column,
+          title: 'Name',
+        }),
+      cell: ({ row }) => {
+        return h(DataTableNameColumn, {
+          picture: row.original.picture,
+          name: row.original.name,
+        });
+      },
     },
-  },
-  {
-    accessorKey: 'departure',
-    header: ({ column }) =>
-      h(DataTableColumnHeader, {
-        column: column,
-        title: 'Departure',
-      }),
-    cell: ({ row }) => {
-      return new Date(row.original.departure).toLocaleDateString();
+    {
+      accessorKey: 'departure',
+      header: ({ column }) =>
+        h(DataTableColumnHeader, {
+          column: column,
+          title: 'Departure',
+        }),
+      cell: ({ row }) => {
+        return new Date(row.original.departure).toLocaleDateString();
+      },
     },
-  },
-  {
-    accessorKey: 'return',
-    header: ({ column }) =>
-      h(DataTableColumnHeader, {
-        column: column,
-        title: 'Return',
-      }),
-    cell: ({ row }) => {
-      return new Date(row.original.return).toLocaleDateString();
+    {
+      accessorKey: 'return',
+      header: ({ column }) =>
+        h(DataTableColumnHeader, {
+          column: column,
+          title: 'Return',
+        }),
+      cell: ({ row }) => {
+        return new Date(row.original.return).toLocaleDateString();
+      },
     },
-  },
-  {
-    accessorKey: 'description',
-    header: ({ column }) =>
-      h(DataTableColumnHeader, {
-        column: column,
-        title: 'Description',
-      }),
-  },
-  {
-    accessorKey: 'price',
-    header: ({ column }) =>
-      h(DataTableColumnHeader, {
-        column: column,
-        title: 'Price',
-      }),
-    cell: ({ row }) => {
-      const formattedPrice = formatPrice(row.original.price);
-      return h('div', { class: 'text-right font-medium' }, formattedPrice);
+    {
+      accessorKey: 'description',
+      header: ({ column }) =>
+        h(DataTableColumnHeader, {
+          column: column,
+          title: 'Description',
+        }),
     },
-  },
-  {
-    accessorKey: 'rating',
-    header: ({ column }) =>
-      h(DataTableColumnHeader, {
-        column: column,
-        title: 'Rating',
-      }),
-    cell: ({ row }) => {
-      return h(DataTableRatingColumn, {
-        rating: row.original.rating,
-      });
+    {
+      accessorKey: 'price',
+      header: ({ column }) =>
+        h(DataTableColumnHeader, {
+          column: column,
+          title: 'Price',
+        }),
+      cell: ({ row }) => {
+        const formattedPrice = formatPrice(row.original.price);
+        return h('div', { class: 'text-right font-medium' }, formattedPrice);
+      },
     },
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    header: 'Actions',
-  },
-];
+    {
+      accessorKey: 'rating',
+      header: ({ column }) =>
+        h(DataTableColumnHeader, {
+          column: column,
+          title: 'Rating',
+        }),
+      cell: ({ row }) => {
+        return h(DataTableRatingColumn, {
+          rating: row.original.rating,
+        });
+      },
+    },
+  ];
+  if (showActions) {
+    cols.push({
+      id: 'actions',
+      enableHiding: false,
+      header: 'Actions',
+    });
+  }
+  return cols;
+};

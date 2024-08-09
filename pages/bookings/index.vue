@@ -33,6 +33,6 @@ onMounted(async () => {
     :key="data.length"
     :columns="bookingColumns"
     :data="data"
-    apiEndpoint="bookings"
+    api-endpoint="bookings"
   />
 </template>

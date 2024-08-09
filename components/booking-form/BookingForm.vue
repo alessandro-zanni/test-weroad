@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-  Check,
-  ChevronsUpDownIcon,
-  Circle,
-  Dot,
-  Loader2,
-} from 'lucide-vue-next';
+import { Check, Circle, Dot, Trash2Icon } from 'lucide-vue-next';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
 import { computed, ref } from 'vue';
@@ -36,6 +30,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { toast } from 'vue-sonner';
 import type { Booking, Travel } from '@/models';
 import {
@@ -44,20 +39,8 @@ import {
   type ApiWrapper,
   type StepType,
 } from '@/types';
-import { cn } from '@/lib/utils';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
+import { travelColumns } from '../travels-data-table/travel-columns';
+import { Badge } from '../ui/badge';
 
 interface Props {
   isCreate: boolean;
@@ -69,7 +52,7 @@ const router = useRouter();
 
 const schema = [
   z.object({
-    travelId: z.coerce.number().int().min(1),
+    travelId: z.coerce.number({ message: 'Select a travel' }).int().min(1),
   }),
   z.object({
     customer: z.object({
@@ -126,7 +109,7 @@ async function getData(): Promise<Travel[]> {
 }
 
 onMounted(async () => {
-  travels.value = (await getData()).slice(0, 20); // Limit to 20
+  travels.value = await getData();
 });
 
 async function createOrUpdateBooking(values: Partial<Booking>) {
@@ -181,7 +164,7 @@ function onSubmit(values: Booking) {
       description: 'There was a problem with your request.',
       action: {
         label: 'Try again',
-        onClick: onSubmit,
+        onClick: () => onSubmit(values),
       },
     }),
   });
@@ -260,77 +243,49 @@ function onSubmit(values: Booking) {
           </StepperItem>
         </Stepper>
 
-        <div class="flex flex-col gap-4 mt-4">
+        <div class="flex flex-col gap-4 mt-8">
           <template v-if="stepIndex === 1">
-            <FormField v-if="travels" name="travelId">
-              <FormItem class="flex flex-col">
-                <FormLabel>Select travel</FormLabel>
-                <Popover>
-                  <PopoverTrigger as-child>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        :disabled="loading"
-                        :class="
-                          cn(
-                            'w-[200px] justify-between',
-                            !values.travelId && 'text-muted-foreground',
-                          )
-                        "
-                      >
-                        <Loader2
-                          v-if="loading"
-                          class="w-4 h-4 mr-2 animate-spin"
-                        />
-                        {{
-                          values.travelId
-                            ? travels.find(
-                                (travel) => travel.id === values.travelId,
-                              )?.name
-                            : 'Select travel...'
-                        }}
-                        <ChevronsUpDownIcon
-                          class="ml-2 h-4 w-4 shrink-0 opacity-50"
-                        />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent class="w-[200px] p-0">
-                    <Command :key="travels.length">
-                      <CommandInput placeholder="Search travel..." />
-                      <CommandEmpty>Nothing found.</CommandEmpty>
-                      <CommandList>
-                        <CommandGroup>
-                          <CommandItem
-                            v-for="travel in travels"
-                            :key="travel.id"
-                            :value="travel.id"
-                            @select="
-                              () => {
-                                setFieldValue('travelId', travel.id);
-                              }
-                            "
-                          >
-                            <Check
-                              :class="
-                                cn(
-                                  'mr-2 h-4 w-4',
-                                  travel.id === values.travelId
-                                    ? 'opacity-100'
-                                    : 'opacity-0',
-                                )
-                              "
-                            />
-                            {{ travel.name }}
-                          </CommandItem>
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+            <FormField v-if="!values.travelId" name="travelId">
+              <FormItem>
+                <FormControl>
+                  <Label for="travelId">Select a travel</Label>
+                  <div
+                    v-if="loading"
+                    class="flex justify-center items-center h-48"
+                  >
+                    <Spinner />
+                  </div>
+                  <TravelsDataTable
+                    v-if="!loading"
+                    :key="travels.length"
+                    :columns="travelColumns(false)"
+                    :data="travels"
+                    api-endpoint="travels"
+                    :show-actions="false"
+                    is-selectable
+                    @select-row="setFieldValue('travelId', $event.id)"
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             </FormField>
+            <p
+              v-if="values.travelId"
+              class="border rounded-md flex justify-center items-center p-4"
+            >
+              Selected travel:
+              <Badge class="ml-2">{{
+                travels.find((travel) => travel.id === values.travelId)?.name
+              }}</Badge>
+              <Button
+                variant="ghost"
+                size="xs"
+                class="ml-2"
+                @click="setFieldValue('travelId', undefined)"
+              >
+                <Trash2Icon class="cursor-pointer w-4 h-4"
+              /></Button>
+            </p>
           </template>
 
           <template v-if="stepIndex === 2">
@@ -456,7 +411,12 @@ function onSubmit(values: Booking) {
             >
               Next
             </Button>
-            <Button v-if="stepIndex === 3" size="sm" type="submit">
+            <Button
+              v-if="stepIndex === 3"
+              size="sm"
+              type="submit"
+              :disabled="!meta.valid"
+            >
               {{ isCreate ? 'Create' : 'Edit' }}
             </Button>
           </div>

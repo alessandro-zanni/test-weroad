@@ -31,8 +31,8 @@ onMounted(async () => {
   <TravelsDataTable
     v-if="!loading"
     :key="data.length"
-    :columns="travelColumns"
+    :columns="travelColumns()"
     :data="data"
-    apiEndpoint="travels"
+    api-endpoint="travels"
   />
 </template>

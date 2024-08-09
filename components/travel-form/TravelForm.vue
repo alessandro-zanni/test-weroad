@@ -84,7 +84,7 @@ function onSubmit(values: Record<string, any>) {
       description: 'There was a problem with your request.',
       action: {
         label: 'Try again',
-        onClick: onSubmit,
+        onClick: () => onSubmit(values),
       },
     }),
   });

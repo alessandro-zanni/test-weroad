@@ -30,10 +30,21 @@ import {
 } from '@/components/ui/data-table';
 import { Button } from '@/components/ui/button';
 
-const props = defineProps<{
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  apiEndpoint: string;
+const props = withDefaults(
+  defineProps<{
+    columns: ColumnDef<TData, TValue>[];
+    data: TData[];
+    apiEndpoint: string;
+    showActions?: boolean;
+    isSelectable?: boolean;
+  }>(),
+  {
+    showActions: true,
+  },
+);
+
+const emit = defineEmits<{
+  'select-row': [row: TData];
 }>();
 
 const sorting = ref<SortingState>([]);
@@ -90,7 +101,7 @@ const table = useVueTable({
 
       <div class="flex items-center space-x-2">
         <DataTableViewOptions :table="table" />
-        <NuxtLink to="/travels/create">
+        <NuxtLink v-if="showActions" to="/travels/create">
           <Button>Add travel</Button>
         </NuxtLink>
       </div>
@@ -117,6 +128,12 @@ const table = useVueTable({
               v-for="row in table.getRowModel().rows"
               :key="row.id"
               :data-state="row.getIsSelected() ? 'selected' : undefined"
+              @click="emit('select-row', row.original)"
+              :class="
+                props.isSelectable
+                  ? 'cursor-pointer active:bg-muted/100 active:ring-2 active:ring-primary'
+                  : undefined
+              "
             >
               <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
                 <FlexRender
@@ -124,9 +141,11 @@ const table = useVueTable({
                   :render="cell.column.columnDef.cell"
                   :props="cell.getContext()"
                 />
-                <div class="text-right">
+                <div
+                  v-if="cell.column.id === 'actions' && showActions"
+                  class="text-right"
+                >
                   <DataTableDropdownActions
-                    v-if="cell.column.id === 'actions'"
                     :table="table"
                     :row="row.original"
                     :apiEndpoint="props.apiEndpoint"
