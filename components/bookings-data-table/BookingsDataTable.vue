@@ -8,6 +8,9 @@ import type {
 import {
   FlexRender,
   getCoreRowModel,
+  getFacetedMinMaxValues,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -24,7 +27,9 @@ import {
 } from '@/components/ui/table';
 import { valueUpdater } from '@/lib/utils';
 import {
+  DataTableDebouncedInput,
   DataTableDropdownActions,
+  DataTableFilter,
   DataTablePagination,
   DataTableViewOptions,
 } from '@/components/ui/data-table';
@@ -37,6 +42,7 @@ const props = defineProps<{
 }>();
 
 const sorting = ref<SortingState>([]);
+const globalFilter = ref('');
 const columnFilters = ref<ColumnFiltersState>([]);
 const columnVisibility = ref<VisibilityState>({});
 
@@ -51,14 +57,22 @@ const table = useVueTable({
   getPaginationRowModel: getPaginationRowModel(),
   getSortedRowModel: getSortedRowModel(),
   onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
+  onGlobalFilterChange: (updaterOrValue) =>
+    valueUpdater(updaterOrValue, globalFilter),
   onColumnFiltersChange: (updaterOrValue) =>
     valueUpdater(updaterOrValue, columnFilters),
+  getFacetedRowModel: getFacetedRowModel(),
+  getFacetedUniqueValues: getFacetedUniqueValues(),
+  getFacetedMinMaxValues: getFacetedMinMaxValues(),
   getFilteredRowModel: getFilteredRowModel(),
   onColumnVisibilityChange: (updaterOrValue) =>
     valueUpdater(updaterOrValue, columnVisibility),
   state: {
     get sorting() {
       return sorting.value;
+    },
+    get globalFilter() {
+      return globalFilter.value;
     },
     get columnFilters() {
       return columnFilters.value;
@@ -81,13 +95,12 @@ const table = useVueTable({
 <template>
   <div>
     <div class="flex items-center justify-between space-x-2 pb-4">
-      <Input
+      <DataTableDebouncedInput
+        :modelValue="globalFilter ?? ''"
+        @update:modelValue="(value) => (globalFilter = String(value))"
         class="max-w-sm"
-        placeholder="Filter travel names..."
-        :model-value="table.getColumn('travel')?.getFilterValue() as string"
-        @update:model-value="table.getColumn('travel')?.setFilterValue($event)"
+        placeholder="Search all columns..."
       />
-
       <div class="flex items-center space-x-2">
         <DataTableViewOptions :table="table" />
         <NuxtLink to="/bookings/create">
@@ -108,6 +121,11 @@ const table = useVueTable({
                 :render="header.column.columnDef.header"
                 :props="header.getContext()"
               />
+              <template
+                v-if="!header.isPlaceholder && header.column.getCanFilter()"
+              >
+                <DataTableFilter :column="header.column" :table="table" />
+              </template>
             </TableHead>
           </TableRow>
         </TableHeader>
